@@ -5,6 +5,50 @@ function Seguro(marca, year, tipo){
     this.tipo = tipo;
 }
 
+Seguro.prototype.cotizarSeguro = function(){
+ 
+    /*
+        1- Americano 1.15
+        2- Asiatico 1.05
+        3- Europeo 1.35
+    */
+
+    let cantidad;
+    const base = 2000;
+
+    switch(this.marca) {
+        case '1':
+            cantidad = base * 1.15;
+            break;
+        case '2':
+        cantidad = base * 1.05
+            break;
+        case '3':
+            cantidad = base * 1.35;
+            break;
+        default:
+            break;
+    }
+
+    //Leer el año 
+    const diferencia = new Date().getFullYear() - this.year;
+    
+    //Cada año que la diferencia es mayor, el costo se reduce en un 3%
+    cantidad -= (( diferencia * 3)* cantidad) / 100; 
+
+    /*
+        Si el seguro es basico se multiplica por un 30% mas
+        Si el seguro es basico se multiplica por un 50% mas 
+    */
+
+    if(this.tipo === 'basico'){
+        cantidad *= 1.30;
+    } else {
+        cantidad *= 1.50;
+    }
+    return cantidad;    
+}
+
 function UI(){}
 
 UI.prototype.llenarOpciones = () => {
@@ -45,6 +89,49 @@ UI.prototype.mostrarMensaje = (mensaje, tipo) => {
 
 }
 
+UI.prototype.mostrarResultado = (total, seguro) =>{
+
+    const {marca, year, tipo} = seguro;
+    let nombreMarca;
+
+    switch(marca){
+        case '1':
+            nombreMarca = 'Americano';
+            break;
+        case '2': 
+            nombreMarca = 'Asiatico';
+            break;
+        case '3':
+            nombreMarca: 'Europeo';
+            break;
+        default:
+            break;
+    }
+    //Crear el resultado
+    const div = document.createElement('div');
+    div.classList.add('mt-10');
+
+    div.innerHTML = `
+        <p class="header"> Tu resumen </p>
+        <p class="font-bold"> <span class="font-normal"> Marca:  ${nombreMarca} </span> </p>
+        <p class="font-bold"> <span class="font-normal"> Año:  ${year} </span> </p>
+        <p class="font-bold"> <span class="font-normal capitalize"> Tipo: ${tipo} </span> </p>
+        <p class="font-bold"> <span class="font-normal"> Total: $ ${total} </span> </p>
+    `;
+
+    const resultadoDiv = document.querySelector('#resultado');  
+
+    //Mostrar el spinner
+    const spinner = document.querySelector('#cargando');
+    spinner.style.display = 'block';
+
+    setTimeout( () => {
+        spinner.style.display = 'none'; //Se borra spinner pero se muestra resultado
+        resultadoDiv.appendChild(div);
+    }, 3000);
+
+}
+
 //Instancia de UI
 const ui = new UI();
 
@@ -79,12 +166,22 @@ function cotizarSeguro(e){
     } 
 
     ui.mostrarMensaje('Cotizando', 'exito');
+
+    //Ocultar cotizaciones previas
+    const resulatdos = document.querySelector('#resultado div')
+    if (resulatdos != null){
+        resulatdos.remove();
+    }
     
     //Instanciar seguro
+    const seguro = new Seguro(marca, year, tipo);
+    const total =  seguro.cotizarSeguro();
 
     //Utilizar el prototype que va a cotizar..
 
+    ui.mostrarResultado(total, seguro)
 }
+
 
 
 
