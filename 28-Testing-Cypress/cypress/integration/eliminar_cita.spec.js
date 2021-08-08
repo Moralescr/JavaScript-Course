@@ -53,6 +53,9 @@ describe('Nueva cita y la elimina', () => {
         cy.get('[data-cy=citas-heading]')
             .invoke('text')
             .should('equal', 'No hay Citas, comienza creando una');
+            
+        //Tomar una captura de pantalla del test
+        cy.screenshot();
     });
 
 });
