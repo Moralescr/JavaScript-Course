@@ -1,8 +1,11 @@
 //imr
 import React, { useState } from 'react';
+import { calcularTotal } from '../helpers';
 
 //sfc
-const Formulario = ({cantidad, guardarCantidad, plazo, guardarPlazo}) => {
+const Formulario = (props) => {
+
+    const {cantidad, guardarCantidad, plazo, guardarPlazo, total, guardarTotal, guardarCargando} = props;
 
     //Definir state
     const [error, guardarError] = useState(false);
@@ -16,9 +19,20 @@ const Formulario = ({cantidad, guardarCantidad, plazo, guardarPlazo}) => {
             guardarError = true;
         } 
 
+        //habilitar spinner
+        guardarCargando (true);
 
-        //Realizar cotización
-        
+        setTimeout( ()=>{
+            //Realizar cotización
+            const total = calcularTotal(cantidad, plazo);
+
+            //Una vez calculado se guardar total
+            guardarTotal(total);
+
+            //Desahabilitar spinner
+            guardarCargando(false);
+            
+        }, 3000) 
 
     }
 
